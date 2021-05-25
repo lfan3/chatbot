@@ -1,0 +1,5 @@
+{
+    "watchFolder": "styleless",
+    "outputFolder": "style",
+    "minified":false
+}

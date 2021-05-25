@@ -1,0 +1,96 @@
+
+@bluegray:#88B0D7;
+@lightbluegray:#CDDEEE;
+@primaryblue:rgb(0,123,255);
+
+.chatbox{
+    width: 20rem;
+    height: 3.5rem;
+    position: fixed;
+    right: 10%;
+    bottom: 0;
+
+    & .red-dot{
+        position: absolute;
+        right: -0.5rem;
+        top: -0.7rem;
+    }
+    &-header{
+        height: 3.5rem;
+        width: 100%;
+        background-color: @primaryblue;
+        color: white;
+        border-radius: 10px 10px 0 0;
+    }
+    &-content{
+        height: 28rem;
+        background-color: white;
+        width: 100%;
+        overflow-y: scroll;
+        &-message{
+            position: relative;
+            margin: 0.2em 0;
+            padding: 0.3em 0;
+            overflow: auto;
+            display: flex;
+            align-items: center;
+            & p{
+                border-radius: 10px;
+                display: inline-block;
+                word-break: break-all;
+                padding: 0.2em 0.3em;
+                max-width: 80%;
+                margin-top: 0.2em;
+                margin-bottom: 0;
+            }
+            &.a{
+                justify-content: flex-start;
+            }
+            &.b{
+                justify-content: flex-end;
+            }
+            & .message-a{
+                background-color: aliceblue;
+            }
+            & .message-b{
+                background-color: aqua;
+            }
+            & > button{
+                display: none;
+            }
+            // &.a > button{
+            //     margin-left: 0.5em;
+            // }
+            // &.b > button{
+            //     margin-right: 0.5em;
+            // }
+        }
+   
+    }
+
+    &-footer{
+        width: 100%;
+        height: 3.4em;
+        background-color: @lightbluegray;
+        position: relative;
+        padding: 0.5em;
+        justify-content: space-evenly;
+        &-input{
+            padding: 0.4rem;
+            border-radius: 10px;
+            position: absolute;
+            border: none;
+            height: 75%;
+            left: 1rem;
+            outline: none;
+        }
+        button{
+            position: absolute;
+            right: 1rem;
+            top: 0.5rem;
+        }
+    }
+
+
+ 
+}
