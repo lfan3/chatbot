@@ -11,7 +11,12 @@ var server = http.createServer(app);
 var bodyParser = require('body-parser');
 var cors = require('cors');
 var Server = require("socket.io").Server;
+var path = require("path");
 var router = express.Router();
+var buildPath = path.resolve("../Frontend/dist");
+app.use(express.static(buildPath));
+app.use('/littleCat', express.static(buildPath));
+app.use('/zenCat', express.static(buildPath));
 //const router = require('./router')
 var port = process.env.PORT || 3000;
 //todo port
@@ -36,16 +41,9 @@ var io = new Server(server, {
 var messages = [];
 //const message = {room:"", userId:"", seperator: 'a', text:"", time:""}; //userId, text, time, room will be store in database
 function deleteMessage(userId, txt, timeData) {
-    console.log(userId, txt, timeData, messages);
     var newMessages = messages.filter(function (m) {
-        console.log(m.userId === userId);
-        console.log(m.text === txt);
-        console.log(m.time.toString() === timeData);
-        console.log(m.time.toString(), typeof (m.time.toString));
-        console.log(timeData, typeof (timeData));
-        return m.userId === userId;
+        return !(m.userId === userId && m.text === txt && m.time.toString() === timeData);
     });
-    console.log(newMessages);
     return newMessages;
 }
 io.on('connection', function (socket) {
@@ -71,15 +69,15 @@ io.on('connection', function (socket) {
     socket.on('delete message', function (_a) {
         var userId = _a.userId, txt = _a.txt, timeData = _a.timeData;
         messages = deleteMessage(userId, txt, timeData);
-        socket.emit("message from api", { msgs: messages });
+        io.to('room').emit("message from api", { msgs: messages });
     });
     socket.on('disconnect', function () {
         console.log("user is leaving");
     });
 });
-router.get("/", function (req, res) {
-    res.send({ res: messages });
-});
+// router.get("/", (req, res)=>{
+//     res.send({res: messages})
+// })
 // let interval;
 // function getApiAndEmit(socket){
 //     const response = new Date();

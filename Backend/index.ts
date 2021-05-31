@@ -7,9 +7,14 @@ const server = http.createServer(app)
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const { Server } = require("socket.io");
+const path = require("path");
 
 const router = express.Router();
 
+const buildPath = path.resolve("../Frontend/dist")
+app.use(express.static(buildPath));
+app.use('/littleCat', express.static(buildPath));
+app.use('/zenCat', express.static(buildPath));
 
 //const router = require('./router')
 const port = process.env.PORT || 3000;
@@ -72,9 +77,9 @@ io.on('connection', (socket)=>{
     })
 })
 
-router.get("/", (req, res)=>{
-    res.send({res: messages})
-})
+// router.get("/", (req, res)=>{
+//     res.send({res: messages})
+// })
 // let interval;
 
 // function getApiAndEmit(socket){

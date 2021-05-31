@@ -14,7 +14,7 @@ import '../style/chatbox.css';
 const ENDPOINT = "http://localhost:3000";
 const socket = socketIOClient(ENDPOINT);
 
-export default function Chatbox({userId}){
+export default function Chatbox({userId, imgPath, userName}){
     const chatboxRef = useRef();
     const chatboxContentRef = useRef();
     const redDotRef = useRef();
@@ -131,8 +131,8 @@ export default function Chatbox({userId}){
         <div className="chatbox" ref={chatboxRef} style={{height : small ? '3.5rem':'35rem'}}>
         <FiberManualRecordIcon style={{ color: red[500] }} className='red-dot' ref={redDotRef} />
         <div className="chatbox-header" onClick={toggleChatbox}>
-            <Avatar path="./public/littleCat.jpg" size="avatar-sm"/>
-            <span>little cat</span>
+            <Avatar path= {imgPath} size="avatar-sm"/>
+            <span>{userName}</span>
         </div> 
         <div className='chatbox-content' ref={chatboxContentRef} >
         {

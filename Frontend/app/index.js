@@ -3,9 +3,11 @@ import React, { useState, useEffect } from "react";
 import socketIOClient from "socket.io-client";
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import LittleCatPublic from './roots/littleCatPublic';
-import LittleCatPrivate from './roots/littleCatPrivate';
+import zenCat from './routes/zenCat';
+import littleCat from './routes/littleCat';
 const ENDPOINT = "http://localhost:3000";
+import './index.css'
+
 import {
     BrowserRouter as Router,
     Switch,
@@ -16,8 +18,10 @@ import {
 function App(){
     return(
         <Router>
-            <Route path='/home' component={LittleCatPublic} />
-            <Route path='/private' component={LittleCatPrivate} />
+            <Switch>
+                <Route path='/' exact component={littleCat} />
+                <Route path='/zenCat' component={zenCat} />
+            </Switch>
         </Router>
     )
   
