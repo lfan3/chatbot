@@ -1,13 +1,19 @@
+
 require('dotenv').config()
 
-const express = require('express')
-const app = express()
-const http = require('http')
-const server = http.createServer(app)
-const bodyParser = require('body-parser')
-const cors = require('cors')
-const { Server } = require("socket.io");
-const path = require("path");
+/**
+ * es6 modules with ts.config *
+ */
+
+import express from 'express';
+import {Request, Response} from 'express';
+const app = express();
+import http from 'http';
+const server = http.createServer(app);
+import bodyParser from 'body-parser';
+import cors from 'cors';
+import { Server, Socket } from "socket.io";
+import path from 'path';
 
 const router = express.Router();
 
@@ -39,37 +45,48 @@ const io = new Server(server, {
     credentials: true
   }});
 
-let messages= [];
+interface Message{
+    room?:string; 
+    userId:string, 
+    seperator?: string, 
+    text:string, 
+    time:number | string
+}
+
+let messages: Array<Message> = [];
 //const message = {room:"", userId:"", seperator: 'a', text:"", time:""}; //userId, text, time, room will be store in database
-function deleteMessage(userId, txt, timeData){
+function deleteMessage(userId:string, txt:string, time: string|number){
     const newMessages = messages.filter(m =>{
-        return ! (m.userId === userId && m.text === txt && m.time.toString() === timeData)
+        return ! (m.userId === userId && m.text === txt && m.time.toString() === time)
     })
     return newMessages;
 }
 
-io.on('connection', (socket)=>{
+io.on('connection', (socket: Socket)=>{
+
     //const {id} = socket.client;
-    let userId;
-    socket.on('initRoom', data => {
+    let userId:string;
+    socket.on('initRoom', (data:any) => {
         userId = data.userId;
         console.log(userId)
         socket.join('room')
     });
-    socket.on("message from client", (data)=>{
+    socket.on("message from client", (data:any)=>{
         const text = data.toUpperCase();
-        const message = {
+        const message: Message = {
             room:"room", 
             userId:userId, 
-            seperator: userId == 10 ? 'a':'b', 
+            seperator: userId == '10' ? 'a':'b', 
             text:text, 
             time:Date.now()
         }
         messages = [...messages, message];
         io.to('room').emit("message from api", {msgs: messages});
     })
-    socket.on('delete message', ({userId,txt, timeData})=>{
-        messages = deleteMessage(userId, txt, timeData);
+    socket.on('delete message', ({userId, text, time}: Message)=>{
+        console.log('delete message', {userId, text, time})
+        messages = deleteMessage(userId, text, time);
+        console.log('remaining messages:', messages)
         io.to('room').emit("message from api", {msgs: messages})
     })
     socket.on('disconnect', ()=>{
@@ -77,9 +94,9 @@ io.on('connection', (socket)=>{
     })
 })
 
-// router.get("/", (req, res)=>{
-//     res.send({res: messages})
-// })
+router.get("/messages", (req: Request, res: Response)=>{
+    res.send({res: messages})
+})
 // let interval;
 
 // function getApiAndEmit(socket){

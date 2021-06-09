@@ -40,9 +40,9 @@ var io = new Server(server, {
 });
 var messages = [];
 //const message = {room:"", userId:"", seperator: 'a', text:"", time:""}; //userId, text, time, room will be store in database
-function deleteMessage(userId, txt, timeData) {
+function deleteMessage(userId, txt, time) {
     var newMessages = messages.filter(function (m) {
-        return !(m.userId === userId && m.text === txt && m.time.toString() === timeData);
+        return !(m.userId === userId && m.text === txt && m.time.toString() === time);
     });
     return newMessages;
 }
@@ -59,7 +59,7 @@ io.on('connection', function (socket) {
         var message = {
             room: "room",
             userId: userId,
-            seperator: userId == 10 ? 'a' : 'b',
+            seperator: userId == '10' ? 'a' : 'b',
             text: text,
             time: Date.now()
         };
@@ -67,8 +67,8 @@ io.on('connection', function (socket) {
         io.to('room').emit("message from api", { msgs: messages });
     });
     socket.on('delete message', function (_a) {
-        var userId = _a.userId, txt = _a.txt, timeData = _a.timeData;
-        messages = deleteMessage(userId, txt, timeData);
+        var userId = _a.userId, text = _a.text, time = _a.time;
+        messages = deleteMessage(userId, text, time);
         io.to('room').emit("message from api", { msgs: messages });
     });
     socket.on('disconnect', function () {

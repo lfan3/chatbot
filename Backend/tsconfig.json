@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+      "target": "es6",
+      "module": "commonjs",
+      "esModuleInterop": true,
+      "removeComments": true,
+      "strict": true
+    },
+    "files": [
+        "index.ts",
+        "test.ts"
+    ]
+}

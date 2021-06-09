@@ -1,11 +1,10 @@
+var animalsArray = [
+    { name: "chicken", size: "small" },
+    { name: "pig", size: "medium" },
+    { name: "cow", size: "large" },
+];
 
-const express = require('express')
-const app = express()
-const http = require('http')
+let a = { name: "dog", size: "large" };
+animalsArray.push(a);
 
-const path = require("path");
-
-const router = express.Router();
-
-const buildPath = path.resolve("../Frontend/dist")
-app.use(express.static(buildPath));
+console.log(animalsArray);
