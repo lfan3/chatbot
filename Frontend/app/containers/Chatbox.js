@@ -21,19 +21,24 @@ export default function Chatbox({userId, imgPath, userName}){
     const [small, setSmall] = useState(true);
     const [inputValue, setInputValue] = useState("");
     const [message, setMessage] = useState("");
-    const [sendMessageNum, setSendMessageNum] = useState(0);
     const [messages, setMessages] = useState([]);
     const [read, setRead] = useState(true);
 
     useEffect(()=>{
         //get message from back
-        fetch(ENDPOINT)
+        console.log('i am fetching, i got messages in init')
+        const messagesEndPoint = ENDPOINT + '/messages'
+        fetch(messagesEndPoint)
             .then(res => res.json())
             .then(data => {
+                console.log('i am fetching, i got messages', data)
                 setMessages(data.res)
             })
+            .catch(e =>{
+                console.log(e);
+            })
     },[])
-
+    //message controller
     useEffect(()=>{
         socket.on("connect", ()=>{
             socket.emit("initRoom", {userId : userId})
@@ -50,11 +55,23 @@ export default function Chatbox({userId, imgPath, userName}){
             }
             setMessages([...msgs]);
         })
+        console.log('fmessage change', message)
+
         if(message !== ""){
             socket.emit("message from client", message);
+            console.log('send message from client')
         }
         //return ()=>socket.disconnect();
-    }, [message, sendMessageNum, read, small])
+    }, [message])
+
+    //chatbox display controller
+    useEffect(()=>{
+        if(read || !small)
+            redDotRef.current.style.display = 'none'
+        else if(!read && small)
+            redDotRef.current.style.display = 'block'
+    }, [read, small])
+
     const changeHandler = (e)=>{
         const f = document.getElementsByClassName('chatbox-footer')[0];
         const c = document.getElementsByClassName('chatbox-content')[0];
@@ -82,7 +99,7 @@ export default function Chatbox({userId, imgPath, userName}){
         if(inputValue !== "")
             setMessage(inputValue)
         setInputValue("")
-        setSendMessageNum(m => m+1) //need this because, if the message is the same, then the useEffect only depend on message will not be called
+        //setSendMessageNum(m => m+1) //need this because, if the message is the same, then the useEffect only depend on message will not be called
     }
     //e.keyCode not work...
     const handleKeypress = (e)=>{
@@ -122,17 +139,19 @@ export default function Chatbox({userId, imgPath, userName}){
     const deleteMessage = (e)=>{
         const messageDiv = e.target.closest('div');
         const messageP = messageDiv.children[0].tagName == 'BUTTON' ? messageDiv.children[1] : messageDiv.children[0];
-        const txt = messageP.textContent;
-        const timeData = messageP.getAttribute('data-time');
+        const text = messageP.textContent;
+        const time = messageP.getAttribute('data-time');
         const userId = messageDiv.classList.contains('a') ? 10 : 20;
-        socket.emit('delete message', {userId,txt, timeData})
+        socket.emit('delete message', {userId, text, time})
     }
+  
     return(
         <div className="chatbox" ref={chatboxRef} style={{height : small ? '3.5rem':'35rem'}}>
         <FiberManualRecordIcon style={{ color: red[500] }} className='red-dot' ref={redDotRef} />
         <div className="chatbox-header" onClick={toggleChatbox}>
             <Avatar path= {imgPath} size="avatar-sm"/>
             <span>{userName}</span>
+           
         </div> 
         <div className='chatbox-content' ref={chatboxContentRef} >
         {
